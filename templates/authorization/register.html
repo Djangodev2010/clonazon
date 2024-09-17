@@ -1,0 +1,14 @@
+{% extends "base/base.html" %}
+{% block title %}Register{% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br><br><form method='POST' enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class='text-center'>
+        <p class='lead'>Already a member? <a href="{% url 'e_commerce:login' %}" style='text-decorations: none;'>Login now!</a></p>
+        <button type="submit" class="btn btn-success">Register</button>
+    </div>
+</form>
+{% endblock content %}

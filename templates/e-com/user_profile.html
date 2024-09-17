@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href='{% url "e_commerce:index" %}'>Amazon</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href='{% url "e_commerce:index" %}'>Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0" action='{% url "e_commerce:search_product" %}'>
+                <input class="form-control mr-sm-2" type="search" name='q' placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            <div>
+                {% for profile in profile %}
+                <a href='{% url "e_commerce:index" %}'>
+                    <img src="{{profile.avatar.url}}" alt="Round Image" style="margin-left: 20px; width: 40px; height: 40px; border-radius: 50%;">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="card" style='margin-top: 120px;'>
+            {% for profile in profile %}
+            <div class="card-body text-center">
+                <img src="{{profile.avatar.url}}" alt="Avatar" class="profile-avatar mb-3">
+                <h4 class="card-title">{{profile.user}}</h4>
+                <div class="d-flex justify-content-center mt-3">
+                    <button class="btn btn-primary mx-2">Account Settings</button>
+                    <button class="btn btn-secondary mx-2">Cart</button>
+                    <form method='POST' action='{% url "e_commerce:logout" %}?next=/e-commerce/login'>
+                        {% csrf_token %}
+                        <button class="btn btn-danger mx-2">Log Out</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

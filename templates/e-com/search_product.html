@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon-like Template</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product-card {
+            width: 180px;
+            margin: 10px;
+        }
+        .product-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+        a {
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: none;
+        }
+
+        .categories-section {
+            margin-top: 28px;
+            padding: 20px;
+            background-color: #f8f9fa; /* Light grey background */
+            text-align: center;
+        }
+        
+        .categories-section h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #343a40; /* Dark grey color */
+        }
+        
+        .cate-card {
+            padding: 0;
+            margin: 0;
+            display: inline-block;
+        }
+        
+        .cate-card .card-body {
+            padding: 5px; /* Adjust this value to make the card smaller in height */
+        }
+        
+        .cate-card .card-title {
+            margin: 0;
+            font-size: 1rem; /* Adjust the font size if needed */
+        }
+          
+    </style>
+</head>
+<body>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href='{% url "e_commerce:index" %}'>Amazon</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'e_commerce:index' %}">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0" action='{% url "e_commerce:search_product" %}'>
+                <input class="form-control mr-sm-2" type="search" name='q' placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+
+
+
+    
+    <!-- Product Grid -->
+    <div class="container mt-4">
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-3">
+                <a href='{% url "e_commerce:product_detail" slug=product.slug %}'>
+                    <div class="card product-card">
+                        <img src="{{product.image.url}}" class="card-img-top product-img" alt="Product Image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{product.name}}</h5>
+                            <p class="card-text">${{product.price}}</p>
+                            <a href="#" class="btn btn-primary">Buy Now</a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="categories-section">
+        <h2>Categories</h2>
+        <div class="container mt-4">
+            <div class="row">
+                {% for category in categories %}
+                <div>
+                    <a href='{% url "e_commerce:cate_view" cate_name=category.name %}'>
+                        <div class="card text-center cate-card" style="display: inline-block;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{category.name}}</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <h5 class='text-center' style='background-color: grey; padding: 0; margin: 0; '>&copy; E-Com<sup>™</sup> 2024. All Rights Reserved.</h5>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

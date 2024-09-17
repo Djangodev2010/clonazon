@@ -1,0 +1,223 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Product Details</title>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+            .product-img-large {
+                width: 40%;
+                height: auto
+            }
+            .product-card {
+                width: 150px;
+                height: auto;
+                margin: 2px;
+            }
+            .product-img {
+                width: 100%;
+                height: 160px;
+                object-fit: cover;
+            }
+            body, html {
+                height: 100%;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+            }
+    
+            .content-wrapper {
+                flex: 1;
+            }
+    
+            .categories-section {
+                margin-top: auto;
+                padding: 20px;
+                background-color: #f8f9fa; /* Light grey background */
+                text-align: center;
+            }
+    
+            .categories-section h2 {
+                margin-bottom: 20px;
+                font-size: 1.5rem;
+                color: #343a40; /* Dark grey color */
+            }
+    
+            .cate-card {
+                padding: 0;
+                margin: 0;
+                display: inline-block;
+            }
+    
+            .cate-card .card-body {
+                padding: 5px; /* Adjust this value to make the card smaller in height */
+            }
+    
+            .cate-card .card-title {
+                margin: 0;
+                font-size: 1rem; /* Adjust the font size if needed */
+            }
+    
+            .text-center {
+                text-align: center;
+            }
+    
+            .fa-star {
+                color: #ddd;
+            }
+            .fa-star.checked {
+                color: #f39c12;
+            }
+
+        </style>
+    </head>
+    <body>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert" style='margin: 0px;'>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+      
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'e_commerce:index' %}">Amazon</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'e_commerce:index' %}">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0"  action='{% url "e_commerce:search_product" %}'>
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+                <div>
+                    {% for profile in profile %}
+                    <a href='{% url "e_commerce:profile" %}'>
+                        <img src="{{profile.avatar.url}}" alt="Round Image" style="margin-left: 20px; width: 40px; height: 40px; border-radius: 50%;">
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </nav>
+    
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{{product.image.url}}" class="img-fluid product-img-large" alt="Product Image">
+                </div>
+                <div class="col-md-6">
+                    <h1 class="display-5">{{product.name}}</h1>
+                    <p class="lead">${{product.price}}</p>
+                    <p class="mb-4">{{product.description}}</p>
+                    {% for c in cate %}
+                    <a href='{% url "e_commerce:cate_view" cate_name=c.name %}'>{{product.category}}</a>
+                    {% endfor %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'e_commerce:add_to_cart' name=product.name %}"><button class="btn btn-primary btn-lg" type="button">Add to Cart</button></a>
+                        <button class="btn btn-success btn-lg" type="button">Buy Now</button>
+                    </div><br>
+                    <br><h4 class="display-5">{{product.extra_desc}}</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="mt-5">
+            <h2>Customer Reviews</h2>
+            <div class="list-group" style='background-color: grey;'>
+                {% for review in reviews|slice:":5" %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <div class="d-flex align-items-center">
+                            {% for profile in profiles %}
+                                {% if profile.user == review.user %}
+                                    <img src="{{ profile.avatar.url }}" alt="{{ review.user.username }}" class="rounded-circle" width="50" height="50">
+                                {% endif %}
+                            {% endfor %}
+                            <h5 class="mb-1 ml-3">{{ review.user.username }}</h5>
+                        </div>
+                        <small>{{ review.created_at|date:"F j, Y" }}</small>
+                    </div>
+                    <p class="mb-1">{{ review.review_text }}</p>
+                    <div>
+                        {% for i in review.stars|range_filter %}
+                        <span class="fa fa-star checked"></span>
+                        {% endfor %}
+                        {% for i in 5|range_filter %}
+                            {% if i >= review.stars %}
+                            <span class="fa fa-star"></span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'e_commerce:all_reviews' id=product.id %}" class="btn btn-secondary mt-3">Show All Reviews</a>
+            <a href="{% url 'e_commerce:write_review' product.slug %}" class="btn btn-primary mt-3">Write a Review</a>
+        </div>
+                
+        
+
+        <!-- Related Products Section -->
+        <div class="mt-5">
+            <h2>Related Products</h2>
+            <div class="row">
+                {% for related_product in related_products %}
+                <div class="col-md-3">
+                    <div class="card product-card">
+                        <img src="{{related_product.image.url}}" class="card-img-top product-image-large" alt="Related Product Image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{related_product.name}}</h5>
+                            <p class="card-text">${{related_product.price}}</p>
+                            <a href="{% url 'e_commerce:product_detail' slug=related_product.slug %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="categories-section">
+            <h2>Categories</h2>
+            <div class="container mt-4">
+                <div class="row">
+                    {% for category in categories %}
+                    <div>
+                        <a href="{% url 'e_commerce:cate_view' cate_name=category.name %}">
+                            <div class="card text-center cate-card" style="display: inline-block; margin-right: 5px;">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ category.name }}</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+        <h5 class="text-center" style="background-color: grey; padding: 0; margin: 0; margin-top: 2px;">© E-Com<sup>™</sup> 2024. All Rights Reserved.</h5>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+</html>
